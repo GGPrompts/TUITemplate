@@ -53,6 +53,18 @@ func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "r":
 		m.addLog("Refreshed view")
 		return m, nil
+
+	case "a", "A":
+		// Toggle accordion mode
+		m.accordionMode = !m.accordionMode
+		if m.accordionMode {
+			m.addLog("Accordion mode: ON (focused panel gets 2x space)")
+			m.statusMsg = "Accordion mode: ON • Focused panel expands to 66%"
+		} else {
+			m.addLog("Accordion mode: OFF (fixed 2:1 layout)")
+			m.statusMsg = "Accordion mode: OFF • Fixed 2:1 layout"
+		}
+		return m, nil
 	}
 
 	return m, nil

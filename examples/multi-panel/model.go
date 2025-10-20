@@ -52,6 +52,9 @@ type model struct {
 	focusedPanel PanelID
 	panels       []PanelID
 
+	// Dynamic panel resizing (LazyGit-style)
+	accordionMode bool // When enabled, focused panel gets 2x weight
+
 	// Panel boundaries for mouse detection
 	panelBounds map[PanelID]panelBounds
 
@@ -90,15 +93,16 @@ func initialModel() model {
 	}
 
 	return model{
-		focusedPanel: LeftPanel,
-		panels:       []PanelID{LeftPanel, TopRightPanel, BottomRightPanel},
-		panelBounds:  make(map[PanelID]panelBounds),
-		files:        files,
-		cursor:       0,
-		details:      "Select a file to view details",
-		logs:         logs,
-		logScroll:    0,
-		statusMsg:    "Tab/h/l: switch • ↑↓: navigate • Mouse: click/wheel",
+		focusedPanel:  LeftPanel,
+		panels:        []PanelID{LeftPanel, TopRightPanel, BottomRightPanel},
+		accordionMode: true, // Start with accordion mode enabled
+		panelBounds:   make(map[PanelID]panelBounds),
+		files:         files,
+		cursor:        0,
+		details:       "Select a file to view details",
+		logs:          logs,
+		logScroll:     0,
+		statusMsg:     "Tab/h/l: switch • ↑↓: navigate • 'a': toggle accordion • Mouse: click/wheel",
 	}
 }
 
@@ -137,4 +141,47 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// calculateThreePanelLayout computes dynamic panel dimensions using weight-based system
+// This implements the LazyGit pattern: focused panel gets 2x weight
+func (m model) calculateThreePanelLayout(availableWidth, availableHeight int) (leftWidth, rightWidth, topHeight, bottomHeight int) {
+	// Calculate horizontal split for top panels
+	dividerWidth := 1
+	topAvailableWidth := availableWidth - dividerWidth
+
+	leftWeight, rightWeight := 1, 1
+	if m.accordionMode {
+		if m.focusedPanel == LeftPanel {
+			leftWeight = 2 // Focused panel gets 2x weight (66%)
+		} else if m.focusedPanel == TopRightPanel {
+			rightWeight = 2
+		}
+	}
+
+	totalHorzWeight := leftWeight + rightWeight
+	leftWidth = (topAvailableWidth * leftWeight) / totalHorzWeight
+	rightWidth = topAvailableWidth - leftWidth
+
+	// Calculate vertical split
+	dividerHeight := 1
+	totalAvailableHeight := availableHeight - dividerHeight
+
+	topWeight, bottomWeight := 1, 1
+	if m.accordionMode {
+		if m.focusedPanel == BottomRightPanel {
+			bottomWeight = 2 // Bottom panel focused gets 2x weight
+		} else {
+			topWeight = 2 // Either top panel focused gets 2x weight
+		}
+	} else {
+		// When accordion is off, give top panels more space by default (2:1 ratio)
+		topWeight = 2
+	}
+
+	totalVertWeight := topWeight + bottomWeight
+	topHeight = (totalAvailableHeight * topWeight) / totalVertWeight
+	bottomHeight = totalAvailableHeight - topHeight
+
+	return leftWidth, rightWidth, topHeight, bottomHeight
 }

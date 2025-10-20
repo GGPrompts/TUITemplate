@@ -1,13 +1,28 @@
 # Multi-Panel TUI Example
 
-A lazygit-style multi-panel TUI application demonstrating focus management, panel navigation, and optimal screen space usage.
+A lazygit-style multi-panel TUI application demonstrating focus management, panel navigation, dynamic resizing, and optimal screen space usage.
 
 ## Features
 
 ### Layout
-- **Left Panel**: File browser/list view (1/3 width)
-- **Top Right Panel**: Details/preview panel (2/3 width, top half)
-- **Bottom Right Panel**: Logs/status panel (2/3 width, bottom half)
+- **Left Panel**: File browser/list view
+- **Top Right Panel**: Details/preview panel
+- **Bottom Right Panel**: Logs/status panel
+- **Dynamic Sizing**: Panels resize based on focus (accordion mode)
+
+### Accordion Mode 🎯
+**NEW: LazyGit-inspired dynamic panel resizing!**
+
+When accordion mode is **ON** (default):
+- Focused panel gets **2x weight** (66% of space)
+- Unfocused panels get **1x weight** (33% of space)
+- Click or use keyboard to focus → panel expands instantly
+- Visual indicator: ● appears in focused panel title
+
+When accordion mode is **OFF**:
+- Fixed 2:1 layout ratio
+- Top panels always get 66% height
+- Left/right panels maintain equal width
 
 ### Focus Management
 - **Visual Indicators**: Focused panels have highlighted borders and titles
@@ -30,6 +45,7 @@ A lazygit-style multi-panel TUI application demonstrating focus management, pane
 #### Global
 - `q` or `Ctrl+C` - Quit application
 - `r` - Refresh view (adds log entry)
+- `a` or `A` - **Toggle accordion mode** (dynamic vs fixed panel sizing)
 
 ### Mouse Support
 
@@ -101,18 +117,37 @@ func getPanelBorderStyle(focused bool) lipgloss.Style {
 }
 ```
 
-### 3. Responsive Layout
+### 3. Dynamic Weight-Based Layout (NEW!)
 
-Panel dimensions are calculated based on terminal size:
+Panel dimensions are calculated using a **weight system** inspired by LazyGit:
+
 ```go
-// Left panel takes 1/3 of width
-leftWidth := m.width / 3
-rightWidth := m.width - leftWidth
+// calculateThreePanelLayout uses weights to determine panel sizes
+func (m model) calculateThreePanelLayout(availableWidth, availableHeight int) (leftWidth, rightWidth, topHeight, bottomHeight int) {
+    // Calculate horizontal weights
+    leftWeight, rightWeight := 1, 1
+    if m.accordionMode && m.focusedPanel == LeftPanel {
+        leftWeight = 2  // Focused panel gets 2x weight!
+    }
 
-// Right panels split vertically
-rightTopHeight := availableHeight / 2
-rightBottomHeight := availableHeight - rightTopHeight
+    // Convert weights to actual widths
+    totalWeight := leftWeight + rightWeight
+    leftWidth = (availableWidth * leftWeight) / totalWeight
+    rightWidth = availableWidth - leftWidth
+
+    // Similar calculation for vertical split...
+}
 ```
+
+**The Math**:
+- Equal weights (1:1) = 50/50 split
+- Focused weight (2:1) = 66/33 split
+- Formula: `width = (totalWidth * weight) / totalWeights`
+
+**Why weights work**:
+- Proportional sizing (not fixed pixels)
+- Instant recalculation (no animations needed)
+- Simple and predictable ratios
 
 ### 4. Context-Aware Input Handling
 
@@ -178,6 +213,24 @@ case "d":
     }
 ```
 
+## Accordion Mode Demo 🎨
+
+Try this sequence to see accordion mode in action:
+
+1. **Launch** the app → Left panel focused, accordion ON
+2. **Click top-right panel** → It expands to 66% width
+3. **Click bottom-right panel** → It expands to 66% height
+4. **Click left panel** → It expands to 66% width
+5. **Press 'a'** → Accordion OFF (fixed 2:1 layout)
+6. **Click panels** → Focus changes but sizes stay fixed
+7. **Press 'a'** → Accordion ON again
+8. **Watch panels resize** instantly as you click!
+
+**Visual Indicators**:
+- Focused panel title shows **●** in accordion mode
+- Border color changes (purple = focused, gray = unfocused)
+- Cursor changes (▶ = focused, ▸ = unfocused)
+
 ## Comparison to lazygit
 
 This example implements lazygit's core UI patterns:
@@ -187,6 +240,8 @@ This example implements lazygit's core UI patterns:
 | Multi-panel layout | ✓ | ✓ |
 | Focus indicators | ✓ | ✓ |
 | Panel navigation (h/l) | ✓ | ✓ |
+| **Weight-based dynamic sizing** | ✓ | ✓ **NEW!** |
+| **Accordion mode** | ✓ | ✓ **NEW!** |
 | Responsive sizing | ✓ | ✓ |
 | Vim-style navigation | ✓ | ✓ |
 | Visual border highlights | ✓ | ✓ |

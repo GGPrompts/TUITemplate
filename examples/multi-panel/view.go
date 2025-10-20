@@ -42,13 +42,8 @@ func (m model) View() string {
 	statusHeight := 1
 	availableHeight := m.height - statusHeight
 
-	// Left panel takes 1/3 of width
-	leftWidth := m.width / 3
-	rightWidth := m.width - leftWidth
-
-	// Right panels split vertically
-	rightTopHeight := availableHeight / 2
-	rightBottomHeight := availableHeight - rightTopHeight
+	// Use dynamic weight-based layout calculation
+	leftWidth, rightWidth, rightTopHeight, rightBottomHeight := m.calculateThreePanelLayout(m.width, availableHeight)
 
 	// Store panel boundaries for mouse detection
 	m.panelBounds[LeftPanel] = panelBounds{
@@ -113,8 +108,12 @@ func (m model) renderLeftPanel(width, height int) string {
 	contentWidth := width - borderWidth - 2  // -2 for padding left+right
 	contentHeight := height - borderHeight - titleHeight - paddingHeight
 
-	// Title
-	title := getPanelTitleStyle(focused).Render(" " + LeftPanel.String() + " ")
+	// Title with weight indicator
+	titleText := " " + LeftPanel.String() + " "
+	if m.accordionMode && focused {
+		titleText += "●" // Indicator for focused + accordion mode
+	}
+	title := getPanelTitleStyle(focused).Render(titleText)
 
 	// Build file list
 	var items []string
@@ -188,8 +187,12 @@ func (m model) renderTopRightPanel(width, height int) string {
 	contentWidth := width - borderWidth - 2  // -2 for padding left+right
 	contentHeight := height - borderHeight - titleHeight - paddingHeight
 
-	// Title
-	title := getPanelTitleStyle(focused).Render(" " + TopRightPanel.String() + " ")
+	// Title with weight indicator
+	titleText := " " + TopRightPanel.String() + " "
+	if m.accordionMode && focused {
+		titleText += "●" // Indicator for focused + accordion mode
+	}
+	title := getPanelTitleStyle(focused).Render(titleText)
 
 	// Build details content
 	lines := strings.Split(m.details, "\n")
@@ -238,8 +241,12 @@ func (m model) renderBottomRightPanel(width, height int) string {
 	contentWidth := width - borderWidth - 2  // -2 for padding left+right
 	contentHeight := height - borderHeight - titleHeight - paddingHeight
 
-	// Title
-	title := getPanelTitleStyle(focused).Render(" " + BottomRightPanel.String() + " ")
+	// Title with weight indicator
+	titleText := " " + BottomRightPanel.String() + " "
+	if m.accordionMode && focused {
+		titleText += "●" // Indicator for focused + accordion mode
+	}
+	title := getPanelTitleStyle(focused).Render(titleText)
 
 	// Build logs content
 	var visibleLines []string
