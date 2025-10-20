@@ -43,45 +43,45 @@ func (m model) View() string {
 	availableHeight := m.height - statusHeight
 
 	// Use dynamic weight-based layout calculation
-	leftWidth, rightWidth, rightTopHeight, rightBottomHeight := m.calculateThreePanelLayout(m.width, availableHeight)
+	leftWidth, rightWidth, topHeight, bottomHeight := m.calculateThreePanelLayout(m.width, availableHeight)
 
 	// Store panel boundaries for mouse detection
 	m.panelBounds[LeftPanel] = panelBounds{
 		x:      0,
 		y:      0,
 		width:  leftWidth,
-		height: availableHeight,
+		height: topHeight,
 	}
 	m.panelBounds[TopRightPanel] = panelBounds{
 		x:      leftWidth,
 		y:      0,
 		width:  rightWidth,
-		height: rightTopHeight,
+		height: topHeight,
 	}
 	m.panelBounds[BottomRightPanel] = panelBounds{
-		x:      leftWidth,
-		y:      rightTopHeight,
-		width:  rightWidth,
-		height: rightBottomHeight,
+		x:      0, // Bottom panel spans full width
+		y:      topHeight,
+		width:  m.width,
+		height: bottomHeight,
 	}
 
 	// Render panels
-	leftPanel := m.renderLeftPanel(leftWidth, availableHeight)
-	rightTopPanel := m.renderTopRightPanel(rightWidth, rightTopHeight)
-	rightBottomPanel := m.renderBottomRightPanel(rightWidth, rightBottomHeight)
+	leftPanel := m.renderLeftPanel(leftWidth, topHeight)
+	rightTopPanel := m.renderTopRightPanel(rightWidth, topHeight)
+	rightBottomPanel := m.renderBottomRightPanel(m.width, bottomHeight) // Full width
 
-	// Stack right panels vertically
-	rightPanels := lipgloss.JoinVertical(
-		lipgloss.Left,
-		rightTopPanel,
-		rightBottomPanel,
-	)
-
-	// Join left and right horizontally
-	content := lipgloss.JoinHorizontal(
+	// Join top panels horizontally (left and right side by side)
+	topPanels := lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		leftPanel,
-		rightPanels,
+		rightTopPanel,
+	)
+
+	// Stack top panels and bottom panel vertically
+	content := lipgloss.JoinVertical(
+		lipgloss.Left,
+		topPanels,
+		rightBottomPanel,
 	)
 
 	// Add status bar
@@ -299,8 +299,8 @@ func (m model) renderBottomRightPanel(width, height int) string {
 
 // renderStatusBar renders the status bar
 func (m model) renderStatusBar() string {
-	// Left side - focused panel indicator
-	leftContent := "Panel: " + m.focusedPanel.String()
+	// Left side - focused panel indicator and mouse position
+	leftContent := fmt.Sprintf("Panel: %s | Mouse: (%d,%d)", m.focusedPanel.String(), m.mouseX, m.mouseY)
 
 	// Right side - help text
 	rightContent := m.statusMsg

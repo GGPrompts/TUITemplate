@@ -93,6 +93,12 @@ func (m model) handleMouseEvent(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 	case tea.MouseWheelDown:
 		// Scroll down in focused panel
 		return m.handleMouseScrollDown(), nil
+
+	case tea.MouseMotion:
+		// Track mouse position for status bar display
+		m.mouseX = msg.X
+		m.mouseY = msg.Y
+		return m, nil
 	}
 
 	return m, nil

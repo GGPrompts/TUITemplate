@@ -65,6 +65,10 @@ type model struct {
 	logs        []string
 	logScroll   int
 
+	// Mouse tracking
+	mouseX int
+	mouseY int
+
 	// Status
 	statusMsg string
 }
