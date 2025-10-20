@@ -23,24 +23,8 @@ func (m model) View() string {
 		return m.renderErrorView()
 	}
 
-	// Render based on current layout (overrides config)
-	var baseView string
-	switch m.currentLayout {
-	case "single":
-		baseView = m.renderSinglePane()
-
-	case "dual_pane":
-		baseView = m.renderDualPane()
-
-	case "multi_panel":
-		baseView = m.renderMultiPanel()
-
-	case "tabbed":
-		baseView = m.renderTabbed()
-
-	default:
-		baseView = m.renderSinglePane()
-	}
+	// Always render tabbed layout
+	baseView := m.renderTabbed()
 
 	// Overlay dropdown menu if open
 	if m.menuOpen && m.activeMenu != "" {
@@ -202,7 +186,7 @@ func (m model) renderTabbed() string {
 
 // renderTabBar renders the tab navigation bar
 func (m model) renderTabBar() string {
-	tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
 	var renderedTabs []string
 
 	for i, name := range tabNames {
@@ -267,48 +251,51 @@ func (m model) renderBottomPanel(width, height int) string {
 	return contentStyle.Width(width).Height(height).Render(content.String())
 }
 
-// Tabbed content rendering functions
+// Layout demo tabs - these showcase different layout patterns
 func (m model) renderTab1Content(width, height int) string {
+	// Tab 0: Single Pane Layout Demo
 	var content strings.Builder
-	content.WriteString("╔════════════════════════╗\n")
-	content.WriteString("║   TAB 1 CONTENT AREA   ║\n")
-	content.WriteString("╚════════════════════════╝\n\n")
-	content.WriteString("Panel ID: tab1-content\n")
-	content.WriteString("Type: tabbed\n")
-	content.WriteString("Tab: 1 of 3\n\n")
-	content.WriteString("Use Tab/Shift+Tab to navigate between tabs.\n\n")
-	content.WriteString("Each tab can contain completely different content.\n")
-	content.WriteString("Reference as 'tab1-content' or 'Tab 1'.")
+	content.WriteString("╔═══════════════════════════════════════╗\n")
+	content.WriteString("║      SINGLE PANE LAYOUT DEMO          ║\n")
+	content.WriteString("╚═══════════════════════════════════════╝\n\n")
+	content.WriteString("Purpose: Full-screen single content area\n\n")
+	content.WriteString("Best for:\n")
+	content.WriteString("• Simple applications with one main view\n")
+	content.WriteString("• Focus mode - no distractions\n")
+	content.WriteString("• Document viewers, readers\n")
+	content.WriteString("• Full-screen editors\n\n")
+	content.WriteString("Pattern:\n")
+	content.WriteString("┌─────────────────────────────┐\n")
+	content.WriteString("│                             │\n")
+	content.WriteString("│      MAIN CONTENT           │\n")
+	content.WriteString("│                             │\n")
+	content.WriteString("└─────────────────────────────┘\n")
 
 	return contentStyle.Width(width).Height(height).Render(content.String())
 }
 
 func (m model) renderTab2Content(width, height int) string {
-	var content strings.Builder
-	content.WriteString("╔════════════════════════╗\n")
-	content.WriteString("║   TAB 2 CONTENT AREA   ║\n")
-	content.WriteString("╚════════════════════════╝\n\n")
-	content.WriteString("Panel ID: tab2-content\n")
-	content.WriteString("Type: tabbed\n")
-	content.WriteString("Tab: 2 of 3\n\n")
-	content.WriteString("This is the second tab with different content.\n\n")
-	content.WriteString("Reference as 'tab2-content' or 'Tab 2'.")
+	// Tab 1: Dual Pane Layout Demo
+	leftPane := m.renderLeftPane(width/2)
+	rightPane := m.renderRightPane(width/2)
+	divider := m.renderDivider()
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	return lipgloss.JoinHorizontal(lipgloss.Top, leftPane, divider, rightPane)
 }
 
 func (m model) renderTab3Content(width, height int) string {
-	var content strings.Builder
-	content.WriteString("╔════════════════════════╗\n")
-	content.WriteString("║   TAB 3 CONTENT AREA   ║\n")
-	content.WriteString("╚════════════════════════╝\n\n")
-	content.WriteString("Panel ID: tab3-content\n")
-	content.WriteString("Type: tabbed\n")
-	content.WriteString("Tab: 3 of 5\n\n")
-	content.WriteString("This is the third tab.\n\n")
-	content.WriteString("Reference as 'tab3-content' or 'Tab 3'.")
+	// Tab 2: Multi-Panel Layout Demo
+	topHeight := height / 2
+	panelWidth := width / 2
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	topLeft := m.renderTopLeftPanel(panelWidth, topHeight)
+	topRight := m.renderTopRightPanel(panelWidth, topHeight)
+	topRow := lipgloss.JoinHorizontal(lipgloss.Top, topLeft, topRight)
+
+	bottomHeight := height - topHeight
+	bottom := m.renderBottomPanel(width, bottomHeight)
+
+	return lipgloss.JoinVertical(lipgloss.Left, topRow, bottom)
 }
 
 // renderBorderShowcase displays different border styles

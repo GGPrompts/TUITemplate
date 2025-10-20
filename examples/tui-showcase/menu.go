@@ -28,17 +28,12 @@ func getMenus() map[string]Menu {
 		"view": {
 			Label: "View",
 			Items: []MenuItem{
-				{Label: "Single Pane", Action: "switch-layout-single", Shortcut: "1"},
-				{Label: "Dual Pane", Action: "switch-layout-dual", Shortcut: "2"},
-				{Label: "Multi-Panel", Action: "switch-layout-multi", Shortcut: "3"},
-				{Label: "Tabbed", Action: "switch-layout-tabbed", Shortcut: "4"},
-				{IsSeparator: true},
-				{Label: "Overview Tab", Action: "switch-tab-0"},
-				{Label: "Content Tab", Action: "switch-tab-1"},
-				{Label: "Settings Tab", Action: "switch-tab-2"},
-				{Label: "Borders Tab", Action: "switch-tab-3"},
-				{Label: "Colors Tab", Action: "switch-tab-4"},
-				{Label: "Dynamic Panels Tab", Action: "switch-tab-5"},
+				{Label: "Single Pane", Action: "switch-tab-0"},
+				{Label: "Dual Pane", Action: "switch-tab-1"},
+				{Label: "Multi-Panel", Action: "switch-tab-2"},
+				{Label: "Borders", Action: "switch-tab-3"},
+				{Label: "Colors", Action: "switch-tab-4"},
+				{Label: "Dynamic Panels", Action: "switch-tab-5"},
 			},
 		},
 		"components": {
@@ -335,45 +330,25 @@ func (m model) executeMenuAction(action string) (tea.Model, tea.Cmd) {
 	case "quit":
 		return m, tea.Quit
 
-	// Layout switching
-	case "switch-layout-single":
-		m.currentLayout = "single"
-		m.statusMsg = "Switched to Single Pane layout"
-	case "switch-layout-dual":
-		m.currentLayout = "dual_pane"
-		m.statusMsg = "Switched to Dual Pane layout"
-	case "switch-layout-multi":
-		m.currentLayout = "multi_panel"
-		m.statusMsg = "Switched to Multi-Panel layout"
-	case "switch-layout-tabbed":
-		m.currentLayout = "tabbed"
-		m.statusMsg = "Switched to Tabbed layout"
-
-	// Tab switching (only works in tabbed layout)
+	// Tab switching
 	case "switch-tab-0":
-		m.currentLayout = "tabbed"
 		m.currentTab = 0
-		m.statusMsg = "Switched to Overview tab"
+		m.statusMsg = "Tab: Single Pane"
 	case "switch-tab-1":
-		m.currentLayout = "tabbed"
 		m.currentTab = 1
-		m.statusMsg = "Switched to Content tab"
+		m.statusMsg = "Tab: Dual Pane"
 	case "switch-tab-2":
-		m.currentLayout = "tabbed"
 		m.currentTab = 2
-		m.statusMsg = "Switched to Settings tab"
+		m.statusMsg = "Tab: Multi-Panel"
 	case "switch-tab-3":
-		m.currentLayout = "tabbed"
 		m.currentTab = 3
-		m.statusMsg = "Switched to Borders tab"
+		m.statusMsg = "Tab: Borders"
 	case "switch-tab-4":
-		m.currentLayout = "tabbed"
 		m.currentTab = 4
-		m.statusMsg = "Switched to Colors tab"
+		m.statusMsg = "Tab: Colors"
 	case "switch-tab-5":
-		m.currentLayout = "tabbed"
 		m.currentTab = 5
-		m.statusMsg = "Switched to Dynamic Panels tab"
+		m.statusMsg = "Tab: Dynamic Panels"
 
 	// File operations (placeholder)
 	case "file-new":
@@ -387,35 +362,29 @@ func (m model) executeMenuAction(action string) (tea.Model, tea.Cmd) {
 
 	// Component tabs
 	case "show-forms":
-		m.currentLayout = "tabbed"
 		m.currentTab = 6
-		m.statusMsg = "Switched to Forms component showcase"
+		m.statusMsg = "Tab: Forms"
 	case "show-tables":
-		m.currentLayout = "tabbed"
 		m.currentTab = 7
-		m.statusMsg = "Switched to Tables component showcase"
+		m.statusMsg = "Tab: Tables"
 	case "show-dialogs":
-		m.currentLayout = "tabbed"
 		m.currentTab = 8
-		m.statusMsg = "Switched to Dialogs component showcase"
+		m.statusMsg = "Tab: Dialogs"
 	case "show-progress":
-		m.currentLayout = "tabbed"
 		m.currentTab = 9
-		m.statusMsg = "Switched to Progress component showcase"
+		m.statusMsg = "Tab: Progress"
 	case "show-tree":
-		m.currentLayout = "tabbed"
 		m.currentTab = 10
-		m.statusMsg = "Switched to Tree View component showcase"
+		m.statusMsg = "Tab: Tree View"
 	case "show-mobile":
-		m.currentLayout = "tabbed"
 		m.currentTab = 11
-		m.statusMsg = "Switched to Mobile Patterns showcase"
+		m.statusMsg = "Tab: Mobile"
 
 	// Help
 	case "show-help-keys":
-		m.statusMsg = "Help: q=quit, 1-4=layouts, Tab/Shift+Tab=switch tabs, ?=help"
+		m.statusMsg = "Help: q=quit, Tab/Shift+Tab=navigate tabs, Menus=click or arrows, ?=help"
 	case "show-about":
-		m.statusMsg = "TUI Showcase - Comprehensive TUI Template System | GitHub: GGPrompts/TUITemplate"
+		m.statusMsg = "TUI Showcase - All TUI Patterns in One App | GitHub: GGPrompts/TUITemplate"
 	case "open-github":
 		m.statusMsg = "GitHub: https://github.com/GGPrompts/TUITemplate"
 

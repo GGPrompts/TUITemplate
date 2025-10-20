@@ -83,39 +83,13 @@ func (m model) handleLeftClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Layout switcher buttons (shown at top)
-	if y == 1 && m.config.UI.ShowTitle {
-		// Check for layout button clicks (shown after title bar)
-		if x >= 2 && x <= 4 {
-			m.currentLayout = "single"
-			m.statusMsg = "Switched to Single Pane (clicked)"
-			m.lastClicked = "button-1"
-			return m, nil
-		} else if x >= 6 && x <= 8 {
-			m.currentLayout = "dual_pane"
-			m.statusMsg = "Switched to Dual Pane (clicked)"
-			m.lastClicked = "button-2"
-			return m, nil
-		} else if x >= 10 && x <= 12 {
-			m.currentLayout = "multi_panel"
-			m.statusMsg = "Switched to Multi-Panel (clicked)"
-			m.lastClicked = "button-3"
-			return m, nil
-		} else if x >= 14 && x <= 16 {
-			m.currentLayout = "tabbed"
-			m.statusMsg = "Switched to Tabbed (clicked)"
-			m.lastClicked = "button-4"
-			return m, nil
-		}
-	}
-
-	// Tab clicks (for tabbed layout)
-	if m.currentLayout == "tabbed" && m.isInTabBar(x, y) {
+	// Tab clicks
+	if m.isInTabBar(x, y) {
 		return m.handleTabBarClick(x, y)
 	}
 
 	// Dynamic panels click (when on tab 5)
-	if m.currentLayout == "tabbed" && m.currentTab == 5 {
+	if m.currentTab == 5 {
 		return m.handleDynamicPanelClick(msg)
 	}
 
@@ -296,7 +270,7 @@ func (m model) isInTabBar(x, y int) bool {
 
 // handleTabBarClick handles clicks on tabs
 func (m model) handleTabBarClick(x, y int) (tea.Model, tea.Cmd) {
-	tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
 	xPos := 0
 
 	for i, name := range tabNames {
@@ -304,7 +278,7 @@ func (m model) handleTabBarClick(x, y int) (tea.Model, tea.Cmd) {
 		tabWidth := len(name) + 6 // "[ " + name + " ]" + padding(0,1)
 		if x >= xPos && x < xPos+tabWidth {
 			m.currentTab = i
-			m.statusMsg = "Switched to " + name + " tab (clicked)"
+			m.statusMsg = "Tab: " + name
 			m.lastClicked = "tab-" + string(rune(i+'0'))
 			return m, nil
 		}

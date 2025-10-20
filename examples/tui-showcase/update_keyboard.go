@@ -120,7 +120,7 @@ func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 // handleMainKeys handles keys in main view
 func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Special handling for Dynamic Panels tab (tab 5)
-	if m.currentLayout == "tabbed" && m.currentTab == 5 {
+	if m.currentTab == 5 {
 		switch msg.String() {
 		case "1":
 			m.focusedPanel = "left"
@@ -147,49 +147,18 @@ func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	switch msg.String() {
 
-	// Layout switching
-	case "1":
-		if m.currentLayout != "tabbed" || m.currentTab != 5 {
-			m.currentLayout = "single"
-			m.statusMsg = "Switched to Single Pane layout"
-		}
-		return m, nil
-
-	case "2":
-		if m.currentLayout != "tabbed" || m.currentTab != 5 {
-			m.currentLayout = "dual_pane"
-			m.statusMsg = "Switched to Dual Pane layout"
-		}
-		return m, nil
-
-	case "3":
-		m.currentLayout = "multi_panel"
-		m.statusMsg = "Switched to Multi-Panel layout"
-		return m, nil
-
-	case "4":
-		m.currentLayout = "tabbed"
-		m.statusMsg = "Switched to Tabbed layout | Use Tab/Shift+Tab to switch tabs"
-		return m, nil
-
-	// Tab navigation (for tabbed layout)
+	// Tab navigation
 	case "tab":
-		if m.currentLayout == "tabbed" {
-			m.currentTab = (m.currentTab + 1) % 12
-			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
-			m.statusMsg = "Switched to " + tabNames[m.currentTab] + " tab"
-			return m, nil
-		}
-		return m.switchFocus()
+		m.currentTab = (m.currentTab + 1) % 12
+		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+		m.statusMsg = "Tab: " + tabNames[m.currentTab]
+		return m, nil
 
 	case "shift+tab":
-		if m.currentLayout == "tabbed" {
-			m.currentTab = (m.currentTab - 1 + 12) % 12
-			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
-			m.statusMsg = "Switched to " + tabNames[m.currentTab] + " tab"
-			return m, nil
-		}
-		return m.switchFocus()
+		m.currentTab = (m.currentTab - 1 + 12) % 12
+		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+		m.statusMsg = "Tab: " + tabNames[m.currentTab]
+		return m, nil
 
 	// Navigation
 	case "up", "k":

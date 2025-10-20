@@ -24,47 +24,40 @@ Examples are **comprehensive applications** that demonstrate multiple TUI patter
 
 **The Comprehensive TUI Pattern Library**
 
-A single, unified application demonstrating **ALL** TUI patterns from basic layouts to advanced components. Navigate using dropdown menus or keyboard shortcuts to explore 12 different showcases.
+A single, unified tab-based application demonstrating **ALL** TUI patterns from basic layouts to advanced components. Everything accessible via 12 interactive tabs - no mode switching needed!
 
 **What It Demonstrates:**
 
-**Layout Modes (Press 1-4):**
-- **Single Pane** - Basic single-panel layout
-- **Dual Pane** - Side-by-side panels with divider
-- **Multi-Panel** - 3-panel layout (top-left, top-right, bottom)
-- **Tabbed** - Tab-based navigation with 12 different tabs
+**Layout Demo Tabs (0-2):**
+- **Single Pane** - Full-screen single content area (live demo)
+- **Dual Pane** - Side-by-side panels with divider (live demo)
+- **Multi-Panel** - 3-panel layout: top-left, top-right, bottom (live demo)
 
-**Tabbed Showcases (Tab/Shift+Tab or Components menu):**
+**Core Showcase Tabs (3-5):**
+- **Borders** - Lipgloss border styles (Rounded, Double, Thick, Normal)
+- **Colors** - Theme color palette with hex codes
+- **Dynamic Panels** - LazyGit-style accordion with weight-based sizing (interactive!)
 
-**Core Tabs (0-5):**
-- **Overview** - Introduction and navigation guide
-- **Content** - Content area demonstration
-- **Settings** - Settings panel example
-- **Borders** - Lipgloss border style showcase (Rounded, Double, Thick, Normal)
-- **Colors** - Theme color palette demonstration
-- **Dynamic Panels** - LazyGit-style accordion with weight-based sizing
-
-**Component Tabs (6-11):**
+**Component Showcase Tabs (6-11):**
 - **Forms** - Text inputs, checkboxes, radio buttons, validation
 - **Tables** - Data grids with sorting, filtering, row selection
 - **Dialogs** - Modal dialogs, confirmations, alerts, prompts
 - **Progress** - Progress bars (determinate/indeterminate), spinners
-- **Tree View** - Expandable/collapsible hierarchical data with file browser
+- **Tree View** - Expandable/collapsible hierarchical data
 - **Mobile** - Termux-optimized patterns, vertical stacking, touch-friendly UI
 
 **Key Features:**
+- **Tab-Based Navigation** - Everything in one unified interface (no layout switching!)
 - **Dropdown Menu System** - File/View/Components/Help menus with mouse support
-- **Mouse Support** - Click menus, tabs, panels, all interactive elements
-- **Keyboard Navigation** - Full keyboard shortcuts for all actions
-- **Responsive Design** - Adapts to terminal size (< 80 cols = vertical stack)
-- **Professional UI** - Clean rendering, no visual corruption, proper borders
-- **Weight-Based Layouts** - Dynamic panel resizing (1:1 = 50/50, 2:1 = 66/33)
+- **Mouse + Keyboard** - Click tabs/menus OR use Tab/Shift+Tab to navigate
+- **Live Layout Demos** - First 3 tabs show actual layout patterns in action
+- **Interactive Dynamic Tab** - Click or press 1/2/3 to focus panels, 'a' for accordion
+- **Responsive Design** - Adapts to terminal size automatically
 
 **Navigation:**
 ```
-Menus:   Click menu bar or use mouse
-Layouts: Press 1 (single), 2 (dual), 3 (multi), 4 (tabbed)
-Tabs:    Tab/Shift+Tab or Components menu
+Tabs:    Tab/Shift+Tab (cycle through all 12 tabs)
+Menus:   Click menu bar or use mouse/arrow keys
 Help:    Press ? for keyboard shortcuts
 Quit:    Press q
 ```

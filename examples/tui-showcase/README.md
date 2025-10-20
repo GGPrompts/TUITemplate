@@ -14,32 +14,32 @@ Press **q** to quit.
 
 ## What's Inside?
 
-This application consolidates patterns from multiple demos into one comprehensive showcase with:
-- **4 Layout Modes** - Single, dual pane, multi-panel, tabbed
+This application consolidates ALL TUI patterns into one comprehensive tab-based showcase:
 - **12 Interactive Tabs** - From basic layouts to advanced components
 - **Dropdown Menu System** - Professional menu bar with mouse support
 - **Full Mouse & Keyboard Support** - Click or type your way around
+- **Unified Navigation** - Everything accessible via tabs (no mode switching!)
 
 ## Navigation
 
 ### Using Menus
 Click the menu bar to open dropdowns:
 - **File** - New, Open, Save, Quit
-- **View** - Switch layouts and tabs
-- **Components** - Jump to component showcases
+- **View** - Jump to layout demos (Single, Dual, Multi-Panel, Borders, Colors, Dynamic)
+- **Components** - Jump to component showcases (Forms, Tables, Dialogs, Progress, Tree, Mobile)
 - **Help** - Keyboard shortcuts and about
 
 ### Using Keyboard
 ```
-Layouts:
-  1 - Single Pane
-  2 - Dual Pane
-  3 - Multi-Panel
-  4 - Tabbed
-
-Tabs (in Tabbed mode):
+Tabs:
   Tab       - Next tab
   Shift+Tab - Previous tab
+
+Dynamic Tab (Tab 5):
+  1 - Focus left panel
+  2 - Focus right panel
+  3 - Focus bottom panel
+  a - Toggle accordion mode
 
 Other:
   ? - Help
@@ -48,20 +48,24 @@ Other:
 
 ## The 12 Showcases
 
-### Core Layout Tabs (0-5)
+### Layout Demo Tabs (0-2)
 
-**Tab 0: Overview**
-- Introduction to the showcase
-- Navigation instructions
-- Quick reference
+**Tab 0: Single Pane**
+- Full-screen single content area demo
+- Best for: simple apps, focus mode, readers, editors
+- Shows the single-pane layout pattern
 
-**Tab 1: Content**
-- Basic content area demonstration
-- Single-pane layout example
+**Tab 1: Dual Pane**
+- Side-by-side panels with divider
+- Best for: file browsers, previews, compare views
+- Live demo using actual dual-pane rendering
 
-**Tab 2: Settings**
-- Settings panel example
-- Configuration UI patterns
+**Tab 2: Multi-Panel**
+- 3-panel layout (top-left, top-right, bottom)
+- Best for: IDEs, dashboards, complex UIs
+- Live demo with clickable panels
+
+### Core Showcase Tabs (3-5)
 
 **Tab 3: Borders**
 - Lipgloss border styles showcase
@@ -69,19 +73,19 @@ Other:
 - Border color demonstrations
 
 **Tab 4: Colors**
-- Theme color palette
+- Theme color palette showcase
 - Primary, Secondary, Accent colors
-- Error, Warning, Info colors
-- Visual color examples
+- Error, Warning, Info, Success colors
+- Visual examples with hex codes
 
 **Tab 5: Dynamic Panels**
-- LazyGit-style accordion panels
+- LazyGit-style accordion panels (3-panel layout)
 - Weight-based layout system (1:1 = 50/50, 2:1 = 66/33)
-- Click panels to focus them
+- Interactive: Click panels to focus OR press 1/2/3
 - Press 'a' to toggle accordion mode
-- Press 1/2 to switch focus
+- Watch panels resize dynamically!
 
-### Component Tabs (6-11)
+### Component Showcase Tabs (6-11)
 
 **Tab 6: Forms** (Components → Forms)
 - Text input fields
