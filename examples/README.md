@@ -16,101 +16,70 @@ Examples are **comprehensive applications** that demonstrate multiple TUI patter
 
 ## Available Examples
 
-### 1. Layout Demo (`layout-demo/`)
+### 1. TUI Showcase (`tui-showcase/`)
 
 **Complexity:** 🔴 Advanced
-**Lines of Code:** ~2000
+**Lines of Code:** ~2500
 **Status:** ✅ Complete
 
+**The Comprehensive TUI Pattern Library**
+
+A single, unified application demonstrating **ALL** TUI patterns from basic layouts to advanced components. Navigate using dropdown menus or keyboard shortcuts to explore 12 different showcases.
+
 **What It Demonstrates:**
-- **Dropdown menu system** - File/View/Components/Help menus
-- **Multiple layouts** - Single pane, dual pane, multi-panel, tabbed
-- **Mouse support** - Click menus, buttons, tabs, panels
-- **Keyboard navigation** - Full menu and layout keyboard shortcuts
-- **Border showcase** - Different Lipgloss border styles
-- **Color palette** - Theme color demonstrations
-- **Dynamic panels** - Accordion-style resizing (LazyGit pattern)
+
+**Layout Modes (Press 1-4):**
+- **Single Pane** - Basic single-panel layout
+- **Dual Pane** - Side-by-side panels with divider
+- **Multi-Panel** - 3-panel layout (top-left, top-right, bottom)
+- **Tabbed** - Tab-based navigation with 12 different tabs
+
+**Tabbed Showcases (Tab/Shift+Tab or Components menu):**
+
+**Core Tabs (0-5):**
+- **Overview** - Introduction and navigation guide
+- **Content** - Content area demonstration
+- **Settings** - Settings panel example
+- **Borders** - Lipgloss border style showcase (Rounded, Double, Thick, Normal)
+- **Colors** - Theme color palette demonstration
+- **Dynamic Panels** - LazyGit-style accordion with weight-based sizing
+
+**Component Tabs (6-11):**
+- **Forms** - Text inputs, checkboxes, radio buttons, validation
+- **Tables** - Data grids with sorting, filtering, row selection
+- **Dialogs** - Modal dialogs, confirmations, alerts, prompts
+- **Progress** - Progress bars (determinate/indeterminate), spinners
+- **Tree View** - Expandable/collapsible hierarchical data with file browser
+- **Mobile** - Termux-optimized patterns, vertical stacking, touch-friendly UI
 
 **Key Features:**
-- Professional menu bar with hover effects
-- Clean dropdown rendering without visual corruption
-- Accurate mouse click detection
-- Tab switching with visual feedback
-- 3-panel dynamic layout with weight-based sizing
+- **Dropdown Menu System** - File/View/Components/Help menus with mouse support
+- **Mouse Support** - Click menus, tabs, panels, all interactive elements
+- **Keyboard Navigation** - Full keyboard shortcuts for all actions
+- **Responsive Design** - Adapts to terminal size (< 80 cols = vertical stack)
+- **Professional UI** - Clean rendering, no visual corruption, proper borders
+- **Weight-Based Layouts** - Dynamic panel resizing (1:1 = 50/50, 2:1 = 66/33)
 
-**Run:**
-```bash
-cd layout-demo
-go run .
+**Navigation:**
 ```
-
-**Perfect for:** Understanding complete layout systems, dropdown menus, and professional UI organization.
-
----
-
-### 2. Dynamic Panels Demo (`dynamic-panels-demo/`)
-
-**Complexity:** 🟡 Intermediate
-**Lines of Code:** ~800
-**Status:** ✅ Complete
-
-**What It Demonstrates:**
-- **LazyGit-style accordion panels** - Focused panel gets 2x space
-- **Weight-based layout system** - Proportional sizing (1:1 = 50/50, 2:1 = 66/33)
-- **Mouse panel focus** - Click panels to focus them
-- **Keyboard focus switching** - Press 1/2 to switch focus
-- **Accordion toggle** - Press 'a' to enable/disable accordion mode
-- **Clean resizing** - Instant, proportional panel resizing
-
-**Key Patterns:**
-```go
-// Weight-based sizing
-leftWeight, rightWeight := 1, 1
-if accordionMode && focusedPanel == "left" {
-    leftWeight = 2  // Focused gets 66%
-}
-leftWidth = (totalWidth * leftWeight) / (leftWeight + rightWeight)
+Menus:   Click menu bar or use mouse
+Layouts: Press 1 (single), 2 (dual), 3 (multi), 4 (tabbed)
+Tabs:    Tab/Shift+Tab or Components menu
+Help:    Press ? for keyboard shortcuts
+Quit:    Press q
 ```
 
 **Run:**
 ```bash
-cd dynamic-panels-demo
+cd tui-showcase
 go run .
 ```
 
-**Perfect for:** Understanding LazyGit-style layouts and weight-based panel systems.
+**Perfect for:** Understanding ALL TUI patterns in one comprehensive application. This is your complete reference implementation.
 
 ---
 
-### 3. Multi-Panel Example (`multi-panel/`)
-
-**Complexity:** 🟡 Intermediate
-**Lines of Code:** ~600
-**Status:** ✅ Complete
-
-**What It Demonstrates:**
-- **3-panel layout** - Top-left, top-right, bottom (full-width)
-- **Panel borders** - Rounded borders with proper height accounting
-- **Content truncation** - Preventing text wrapping issues
-- **Mouse click detection** - Clicking panels with coordinate detection
-- **Vertical stacking** - Responsive layout for narrow terminals
-
-**Critical Patterns:**
-- Border height accounting: `contentHeight -= 2`
-- Text truncation to prevent wrapping
-- Relative coordinate calculations for clicks
-
-**Run:**
-```bash
-cd multi-panel
-go run .
-```
-
-**Perfect for:** Multi-panel layouts and proper border handling.
-
----
-
-### 4. Termux Mobile Demo (`termux-mobile-demo/`)
+### 2. Termux Mobile Demo (`termux-mobile-demo/`)
 
 **Complexity:** 🟡 Intermediate
 **Lines of Code:** ~700
@@ -139,7 +108,7 @@ go run .
 
 ---
 
-### 5. Termux Size Detector (`termux-size-detector/`)
+### 3. Termux Size Detector (`termux-size-detector/`)
 
 **Complexity:** 🟢 Simple
 **Lines of Code:** ~100
@@ -186,25 +155,26 @@ go run .
 
 ### Advanced Patterns
 
-**Dropdown Menus** (layout-demo)
+**Dropdown Menus** (tui-showcase)
 - Menu bar rendering and positioning
 - Dropdown overlay without corruption
 - Mouse hover auto-switching
 - Keyboard navigation (arrows, enter, esc)
 
-**Weight-Based Layouts** (dynamic-panels-demo)
+**Weight-Based Layouts** (tui-showcase - Dynamic Panels tab)
 - Proportional panel sizing
 - Focus-based resizing (accordion mode)
 - Instant layout updates
 - Clean, maintainable layout code
 
-**Border Height Accounting** (multi-panel)
-- Critical: `contentHeight -= 2` for borders
-- Preventing panel overflow
-- Text truncation to avoid wrapping
-- Proper panel alignment
+**Component Showcases** (tui-showcase - Component tabs)
+- Forms with inputs and validation
+- Tables with sorting and filtering
+- Dialogs and modal windows
+- Progress indicators and spinners
+- Tree views with hierarchical data
 
-**Mobile Optimization** (termux-mobile-demo)
+**Mobile Optimization** (tui-showcase - Mobile tab, termux-mobile-demo)
 - Portrait vs landscape detection
 - Vertical stacking for narrow screens
 - Touch-friendly UI elements
@@ -293,9 +263,10 @@ cd ..
 ```
 
 ### 2. Reference Examples
-- **Need menus?** → Study `layout-demo/menu.go`
-- **Need panels?** → Study `dynamic-panels-demo/model.go`
-- **Need mobile support?** → Study `termux-mobile-demo/`
+- **Need menus?** → Study `tui-showcase/menu.go`
+- **Need panels?** → Study `tui-showcase/model.go` (Dynamic Panels)
+- **Need components?** → Study `tui-showcase/view_components.go`
+- **Need mobile support?** → Study `tui-showcase/` (Mobile tab) or `termux-mobile-demo/`
 - **Debugging layout?** → Use `termux-size-detector/`
 
 ### 3. Read Documentation
@@ -341,10 +312,13 @@ Have a cool TUI app to share?
 ## Quick Reference
 
 ### Dropdown Menus
-See: `layout-demo/menu.go`
+See: `tui-showcase/menu.go`
 
 ### Weight-Based Panels
-See: `dynamic-panels-demo/model.go:103-144`
+See: `tui-showcase/model.go:106-190` (Dynamic Panels tab)
+
+### Component Showcases
+See: `tui-showcase/view_components.go` (Forms, Tables, Dialogs, Progress, Tree, Mobile)
 
 ### Border Height Fix
 ```go
@@ -354,10 +328,10 @@ contentHeight -= 2 // top + bottom borders
 See: `CLAUDE.md` for full explanation
 
 ### Mouse Click Detection
-See: `layout-demo/update_mouse.go`
+See: `tui-showcase/update_mouse.go`
 
 ### Mobile Optimization
-See: `termux-mobile-demo/view.go`
+See: `tui-showcase/view_components.go:330+` (Mobile tab) or `termux-mobile-demo/view.go`
 
 ---
 
