@@ -296,7 +296,7 @@ func (m model) isInTabBar(x, y int) bool {
 
 // handleTabBarClick handles clicks on tabs
 func (m model) handleTabBarClick(x, y int) (tea.Model, tea.Cmd) {
-	tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic"}
+	tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
 	xPos := 0
 
 	for i, name := range tabNames {

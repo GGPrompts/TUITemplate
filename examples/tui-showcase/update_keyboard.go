@@ -175,8 +175,8 @@ func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Tab navigation (for tabbed layout)
 	case "tab":
 		if m.currentLayout == "tabbed" {
-			m.currentTab = (m.currentTab + 1) % 6
-			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic"}
+			m.currentTab = (m.currentTab + 1) % 12
+			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
 			m.statusMsg = "Switched to " + tabNames[m.currentTab] + " tab"
 			return m, nil
 		}
@@ -184,8 +184,8 @@ func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case "shift+tab":
 		if m.currentLayout == "tabbed" {
-			m.currentTab = (m.currentTab - 1 + 6) % 6
-			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic"}
+			m.currentTab = (m.currentTab - 1 + 12) % 12
+			tabNames := []string{"Overview", "Content", "Settings", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
 			m.statusMsg = "Switched to " + tabNames[m.currentTab] + " tab"
 			return m, nil
 		}
