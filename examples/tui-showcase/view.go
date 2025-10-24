@@ -172,6 +172,8 @@ func (m model) renderTabbed() string {
 		sections = append(sections, m.renderTreeViewTab(contentWidth, contentHeight))
 	case 11:
 		sections = append(sections, m.renderMobileTab(contentWidth, contentHeight))
+	case 12:
+		sections = append(sections, m.renderFourPanelTab(contentWidth, contentHeight))
 	default:
 		sections = append(sections, m.renderTab1Content(contentWidth, contentHeight))
 	}
@@ -186,7 +188,7 @@ func (m model) renderTabbed() string {
 
 // renderTabBar renders the tab navigation bar
 func (m model) renderTabBar() string {
-	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile", "4-Panel"}
 	var renderedTabs []string
 
 	for i, name := range tabNames {
@@ -810,44 +812,116 @@ func renderVerticalDivider(height int) string {
 	return dividerStyle.Render(strings.Join(lines, "\n"))
 }
 
+// renderFourPanelTab renders the 4-panel dynamic layout (Tab 12)
+func (m model) renderFourPanelTab(totalWidth, totalHeight int) string {
+	// Calculate panel dimensions using weight-based system (4-panel layout)
+	headerHeight, middleHeight, footerHeight, leftWidth, rightWidth := m.calculateFourPanelLayout(totalWidth, totalHeight)
+
+	// Render header panel
+	headerPanel := m.renderDynamicPanel("header", totalWidth, headerHeight, m.headerContent)
+
+	// Render middle row panels
+	leftPanel := m.renderDynamicPanel("left", leftWidth, middleHeight, m.leftContent)
+	divider := renderVerticalDivider(middleHeight)
+	rightPanel := m.renderDynamicPanel("right", rightWidth, middleHeight, m.rightContent)
+
+	// Join middle panels horizontally
+	middlePanels := lipgloss.JoinHorizontal(lipgloss.Top, leftPanel, divider, rightPanel)
+
+	// Render footer panel
+	footerPanel := m.renderDynamicPanel("footer", totalWidth, footerHeight, m.bottomContent)
+
+	// Stack all panels vertically
+	return lipgloss.JoinVertical(lipgloss.Left, headerPanel, middlePanels, footerPanel)
+}
+
 // overlayDropdown overlays a dropdown menu on the base view at the specified position
+// Uses proper ANSI-aware overlay to preserve background content (from TFE)
 func (m model) overlayDropdown(baseView, dropdown string, x, y int) string {
 	// Split base view into lines
 	baseLines := strings.Split(baseView, "\n")
 	dropdownLines := strings.Split(dropdown, "\n")
 
-	// Ensure we have enough lines in base view
-	if y >= len(baseLines) {
-		return baseView
-	}
-
-	// Get dropdown width
-	dropdownWidth := 0
-	if len(dropdownLines) > 0 {
-		dropdownWidth = lipgloss.Width(dropdownLines[0])
+	// Ensure we have enough base lines
+	for len(baseLines) < m.height {
+		baseLines = append(baseLines, "")
 	}
 
 	// Overlay each dropdown line onto the base view
 	for i, dropdownLine := range dropdownLines {
-		lineIndex := y + i
-		if lineIndex >= len(baseLines) {
-			break
+		targetLine := y + i
+		if targetLine < 0 || targetLine >= len(baseLines) {
+			continue
 		}
 
-		// Simple approach: clear the line and reposition the dropdown
-		// This avoids ANSI code issues
-		baseWidth := m.width // Use full terminal width
+		baseLine := baseLines[targetLine]
 
-		// Create new line: padding + dropdown + padding to fill width
-		newLine := strings.Repeat(" ", x) + dropdownLine
+		// We need to overlay dropdownLine at visual column x
+		// Use a string builder to construct the new line
+		var newLine strings.Builder
 
-		// Pad to full width
-		currentWidth := x + dropdownWidth
-		if currentWidth < baseWidth {
-			newLine += strings.Repeat(" ", baseWidth-currentWidth)
+		// Get the part of baseLine before position x
+		// We need to handle ANSI codes properly
+		visualPos := 0
+		bytePos := 0
+		inAnsi := false
+		baseRunes := []rune(baseLine)
+
+		// Scan through base line until we reach visual position x
+		for bytePos < len(baseRunes) && visualPos < x {
+			if baseRunes[bytePos] == '\033' {
+				inAnsi = true
+			} else if inAnsi {
+				if (baseRunes[bytePos] >= 'A' && baseRunes[bytePos] <= 'Z') ||
+					(baseRunes[bytePos] >= 'a' && baseRunes[bytePos] <= 'z') {
+					inAnsi = false
+				}
+			} else {
+				// Count visual width (handles wide characters)
+				visualPos++
+			}
+			bytePos++
 		}
 
-		baseLines[lineIndex] = newLine
+		// Add the left part of the base line (up to position x)
+		if bytePos > 0 && bytePos <= len(baseRunes) {
+			newLine.WriteString(string(baseRunes[:bytePos]))
+		}
+
+		// Pad with spaces if needed to reach position x
+		for visualPos < x {
+			newLine.WriteRune(' ')
+			visualPos++
+		}
+
+		// Add the dropdown line
+		newLine.WriteString(dropdownLine)
+
+		// Now preserve the right side of the base line (after the dropdown)
+		dropdownWidth := lipgloss.Width(dropdownLine)
+		endVisualPos := x + dropdownWidth
+
+		// Continue from where we left off and skip to the end position
+		for bytePos < len(baseRunes) && visualPos < endVisualPos {
+			if baseRunes[bytePos] == '\033' {
+				inAnsi = true
+			} else if inAnsi {
+				if (baseRunes[bytePos] >= 'A' && baseRunes[bytePos] <= 'Z') ||
+					(baseRunes[bytePos] >= 'a' && baseRunes[bytePos] <= 'z') {
+					inAnsi = false
+				}
+			} else {
+				visualPos++
+			}
+			bytePos++
+		}
+
+		// Add the remaining right part of the base line
+		if bytePos < len(baseRunes) {
+			newLine.WriteString(string(baseRunes[bytePos:]))
+		}
+
+		baseLines[targetLine] = newLine.String()
 	}
 
 	return strings.Join(baseLines, "\n")
