@@ -14,6 +14,7 @@ TUITemplate provides a modular, well-architected starting point for creating TUI
 - 🖱️ **Mouse & Keyboard** - Full input handling with customizable keybindings
 - 📐 **Flexible Layouts** - Single-pane, dual-pane, multi-panel, and tabbed interfaces
 - 🔧 **Utility Libraries** - Config, theme, keybindings, logging, clipboard, terminal detection
+- ✨ **Effects Library** - Physics-based animations: metaballs, wave distortions, rainbow cycling
 - 📚 **Comprehensive Docs** - Research on 80+ TUI tools and 20+ Bubbletea libraries
 - 🚀 **Quick Start** - Generate new projects in seconds with `new_project.sh`
 
@@ -103,6 +104,42 @@ Pre-built panel layouts for different UI arrangements:
 - **Status** - Status bar, title bar, breadcrumbs
 - **Preview** - Text, markdown, syntax highlighting, images, hex
 - **Tables** - Simple and interactive tables
+
+## TUI Effects Library
+
+Beautiful, physics-based animations for terminal UIs:
+
+### Available Effects
+
+- 🔮 **Metaballs** - Lava lamp-style floating blobs with physics simulation
+- 🌊 **Wave Effects** - Sine wave distortions for grids and content
+- 🌈 **Rainbow Cycling** - Animated color gradients for text
+- 🎭 **Layer Compositor** - ANSI-aware multi-layer rendering
+
+### Quick Example
+
+```go
+import "github.com/GGPrompts/TUITemplate/lib/effects/metaballs"
+
+// Create engine with floating blobs
+engine := metaballs.NewEngine(width, height)
+engine.AddBlob(metaballs.NewBlob(x, y, vx, vy, radius, color))
+
+// Update and render
+engine.Update()
+return engine.Render()
+```
+
+### Complete Examples
+
+```bash
+cd examples/effects/metaball-spinner  # Loading screen
+cd examples/effects/wavy-menu         # Animated menu
+cd examples/effects/rainbow-text      # Color cycling
+cd examples/effects/landing-page      # Full demo
+```
+
+**Documentation:** `lib/effects/README.md` and `docs/EFFECTS_LIBRARY.md`
 
 ## Configuration
 
@@ -321,6 +358,21 @@ github.com/koki-develop/go-fzf         # Fuzzy finder
 ```
 
 See `docs/research/ECOSYSTEM_QUICK_REFERENCE.md` for complete list.
+
+## Documentation
+
+### Guides
+
+- **[Emoji Width Alignment Fix](docs/EMOJI_WIDTH_FIX.md)** - Fix emoji alignment issues in WezTerm/Termux
+- **[Mouse Support Guide](docs/MOUSE_SUPPORT_GUIDE.md)** - Implementing mouse interactions
+- **[Termux Mobile Guide](docs/TERMUX_MOBILE_GUIDE.md)** - Building TUIs for Android/mobile
+- **[Scrolling & Responsive Design](docs/SCROLLING_AND_RESPONSIVE.md)** - Viewport and layout handling
+- **[Effects Library](docs/EFFECTS_LIBRARY.md)** - Physics-based animations and visual effects
+
+### Research & Analysis
+
+- **[Lazygit Analysis](docs/LAZYGIT_ANALYSIS.md)** - Architecture study of popular TUI
+- **Ecosystem Research** - 80+ TUI tools and 20+ Bubbletea libraries analyzed
 
 ## Contributing
 
