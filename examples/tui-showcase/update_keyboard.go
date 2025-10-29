@@ -11,6 +11,18 @@ import (
 
 // handleKeyPress handles keyboard input
 func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Effect mode - allow escape to return to showcase
+	if m.activeEffect != "" {
+		switch msg.String() {
+		case "esc", "q":
+			m.activeEffect = ""
+			m.statusMsg = "Returned to showcase"
+			return m, nil
+		}
+		// Consume all other keys when in effect mode
+		return m, nil
+	}
+
 	// Menu navigation (highest priority when menu is open)
 	if m.menuOpen {
 		switch msg.String() {
@@ -119,7 +131,7 @@ func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 // handleMainKeys handles keys in main view
 func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	// Special handling for Dynamic Panels tab (tab 5)
+	// Special handling for Dynamic Panels tab (tab 5) - 3 panels
 	if m.currentTab == 5 {
 		switch msg.String() {
 		case "1":
@@ -145,18 +157,48 @@ func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	// Special handling for 4-Panel tab (tab 12) - 4 panels
+	if m.currentTab == 12 {
+		switch msg.String() {
+		case "1":
+			m.focusedPanel = "left"
+			m.statusMsg = "Focused LEFT panel"
+			return m, nil
+		case "2":
+			m.focusedPanel = "right"
+			m.statusMsg = "Focused RIGHT panel"
+			return m, nil
+		case "3":
+			m.focusedPanel = "footer"
+			m.statusMsg = "Focused FOOTER panel (bottom)"
+			return m, nil
+		case "4":
+			m.focusedPanel = "header"
+			m.statusMsg = "Focused HEADER panel (top)"
+			return m, nil
+		case "a", "A":
+			m.accordionMode = !m.accordionMode
+			if m.accordionMode {
+				m.statusMsg = "Accordion mode: ON (focused panel gets up to 66% space)"
+			} else {
+				m.statusMsg = "Accordion mode: OFF (panels at default size)"
+			}
+			return m, nil
+		}
+	}
+
 	switch msg.String() {
 
 	// Tab navigation
 	case "tab":
-		m.currentTab = (m.currentTab + 1) % 12
-		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+		m.currentTab = (m.currentTab + 1) % 13
+		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile", "4-Panel"}
 		m.statusMsg = "Tab: " + tabNames[m.currentTab]
 		return m, nil
 
 	case "shift+tab":
-		m.currentTab = (m.currentTab - 1 + 12) % 12
-		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+		m.currentTab = (m.currentTab - 1 + 13) % 13
+		tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile", "4-Panel"}
 		m.statusMsg = "Tab: " + tabNames[m.currentTab]
 		return m, nil
 

@@ -189,6 +189,13 @@ print_info "Copying utility libraries..."
 cp -r "$TEMPLATE_DIR/lib" "$PROJECT_DIR/"
 print_success "Copied lib/"
 
+# Copy .claude directory (bubbletea skill)
+if [ -d "$TEMPLATE_DIR/.claude" ]; then
+    print_info "Copying bubbletea skill..."
+    cp -r "$TEMPLATE_DIR/.claude" "$PROJECT_DIR/"
+    print_success "Copied .claude/skills/bubbletea/"
+fi
+
 # Initialize Go module
 print_info "Initializing Go module..."
 cd "$PROJECT_DIR"

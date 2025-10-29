@@ -1,11 +1,54 @@
 package main
 
+import (
+	"github.com/GGPrompts/TUITemplate/lib/effects/metaballs"
+	"github.com/GGPrompts/TUITemplate/lib/effects/rainbow"
+	"github.com/GGPrompts/TUITemplate/lib/effects/waves"
+	"github.com/charmbracelet/lipgloss"
+)
+
 // model.go - Model Management
 // Purpose: Model initialization and layout calculations
 // When to extend: Add new initialization logic or layout calculation functions here
 
 // initialModel creates the initial application state
 func initialModel(cfg Config) model {
+	// Initialize effects (with default size, will be resized on first window size message)
+	defaultWidth, defaultHeight := 80, 24
+
+	// Metaballs engine with 3 blobs
+	metaballEngine := metaballs.NewEngine(defaultWidth, defaultHeight)
+	metaballEngine.AddBlob(metaballs.NewBlob(
+		float64(defaultWidth)/3,
+		float64(defaultHeight)/2,
+		0.3, 0.2, 6,
+		lipgloss.Color("51"), // Cyan
+	))
+	metaballEngine.AddBlob(metaballs.NewBlob(
+		float64(defaultWidth)*2/3,
+		float64(defaultHeight)/2,
+		-0.25, 0.15, 7,
+		lipgloss.Color("201"), // Magenta
+	))
+	metaballEngine.AddBlob(metaballs.NewBlob(
+		float64(defaultWidth)/2,
+		float64(defaultHeight)*2/3,
+		0.2, -0.3, 5,
+		lipgloss.Color("226"), // Yellow
+	))
+
+	// Wave grid
+	waveGrid := waves.NewGrid(defaultWidth, defaultHeight)
+	waveGrid.SetGridSize(10)
+	waveGrid.SetColors(waves.GridColors{
+		Intersection: lipgloss.Color("129"), // Purple
+		Vertical:     lipgloss.Color("61"),  // Dark purple
+		Horizontal:   lipgloss.Color("61"),  // Dark purple
+	})
+
+	// Rainbow cycler
+	rainbowCycler := rainbow.NewCycler()
+
 	return model{
 		config:           cfg,
 		width:            0,
@@ -16,6 +59,9 @@ func initialModel(cfg Config) model {
 		currentTab:       0,
 		focusedPanel:     "left",
 		accordionMode:    true,
+		metaballEngine:   metaballEngine,
+		waveGrid:         waveGrid,
+		rainbowCycler:    rainbowCycler,
 		leftContent: []string{
 			"LEFT PANEL",
 			"",
@@ -43,6 +89,15 @@ func initialModel(cfg Config) model {
 			"Click or press '3' to focus.",
 			"Expands to 66% height when focused!",
 		},
+		headerContent: []string{
+			"HEADER PANEL",
+			"",
+			"This is the top header panel.",
+			"Press '4' to focus this panel.",
+			"",
+			"When focused, expands to 50% height!",
+			"Perfect for stats, templates, filters.",
+		},
 	}
 }
 
@@ -50,6 +105,14 @@ func initialModel(cfg Config) model {
 func (m *model) setSize(width, height int) {
 	m.width = width
 	m.height = height
+
+	// Resize effects to match new dimensions
+	if m.metaballEngine != nil {
+		m.metaballEngine.Resize(width, height)
+	}
+	if m.waveGrid != nil {
+		m.waveGrid.Resize(width, height)
+	}
 
 	// Recalculate any layout-dependent values here
 	// Example:
@@ -187,4 +250,63 @@ func (m model) calculateThreePanelLayout(availableWidth, availableHeight int) (l
 	bottomHeight = totalAvailableHeight - topHeight
 
 	return leftWidth, rightWidth, topHeight, bottomHeight
+}
+
+// calculateFourPanelLayout computes dynamic panel dimensions for 4-panel layout
+// Layout: Header (top) | Left + Right (middle row) | Footer (bottom)
+// ANY panel can expand to 50% when focused in accordion mode
+func (m model) calculateFourPanelLayout(availableWidth, availableHeight int) (
+	headerHeight, middleHeight, footerHeight int,
+	leftWidth, rightWidth int,
+) {
+	// Vertical splits (header : middle : footer)
+	headerWeight, middleWeight, footerWeight := 1, 2, 1 // Default: 25% : 50% : 25%
+
+	if m.accordionMode {
+		switch m.focusedPanel {
+		case "header":
+			// Header gets 50%, middle+footer share 50%
+			headerWeight = 2 // 2/4 = 50%
+			middleWeight = 1 // 1/4 = 25%
+			footerWeight = 1 // 1/4 = 25%
+
+		case "footer":
+			// Footer gets 50%, header+middle share 50%
+			headerWeight = 1 // 1/4 = 25%
+			middleWeight = 1 // 1/4 = 25%
+			footerWeight = 2 // 2/4 = 50%
+
+		case "left", "right":
+			// Middle row gets more space (66%), header/footer compressed
+			headerWeight = 1 // 1/6 = 16.67%
+			middleWeight = 4 // 4/6 = 66.67%
+			footerWeight = 1 // 1/6 = 16.67%
+		}
+	}
+
+	totalVertWeight := headerWeight + middleWeight + footerWeight
+	headerHeight = (availableHeight * headerWeight) / totalVertWeight
+	footerHeight = (availableHeight * footerWeight) / totalVertWeight
+	middleHeight = availableHeight - headerHeight - footerHeight
+
+	// Horizontal split in middle row (left : right)
+	dividerWidth := 1
+	middleAvailableWidth := availableWidth - dividerWidth
+
+	leftWeight, rightWeight := 1, 1
+	if m.accordionMode {
+		if m.focusedPanel == "left" {
+			leftWeight = 3  // 3/4 = 75%
+			rightWeight = 1 // 1/4 = 25%
+		} else if m.focusedPanel == "right" {
+			leftWeight = 1  // 1/4 = 25%
+			rightWeight = 3 // 3/4 = 75%
+		}
+	}
+
+	totalHorzWeight := leftWeight + rightWeight
+	leftWidth = (middleAvailableWidth * leftWeight) / totalHorzWeight
+	rightWidth = middleAvailableWidth - leftWidth
+
+	return headerHeight, middleHeight, footerHeight, leftWidth, rightWidth
 }

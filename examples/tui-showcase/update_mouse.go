@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -88,9 +90,14 @@ func (m model) handleLeftClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 		return m.handleTabBarClick(x, y)
 	}
 
-	// Dynamic panels click (when on tab 5)
+	// Dynamic panels click (when on tab 5 - 3 panels)
 	if m.currentTab == 5 {
 		return m.handleDynamicPanelClick(msg)
+	}
+
+	// 4-Panel click (when on tab 12)
+	if m.currentTab == 12 {
+		return m.handleFourPanelClick(msg)
 	}
 
 	// Panel clicks - detect which panel was clicked
@@ -270,7 +277,7 @@ func (m model) isInTabBar(x, y int) bool {
 
 // handleTabBarClick handles clicks on tabs
 func (m model) handleTabBarClick(x, y int) (tea.Model, tea.Cmd) {
-	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile"}
+	tabNames := []string{"Single", "Dual", "Multi", "Borders", "Colors", "Dynamic", "Forms", "Tables", "Dialogs", "Progress", "Tree", "Mobile", "4-Panel"}
 	xPos := 0
 
 	for i, name := range tabNames {
@@ -290,13 +297,17 @@ func (m model) handleTabBarClick(x, y int) (tea.Model, tea.Cmd) {
 
 // handleDynamicPanelClick handles clicks on dynamic panels (tab 5) - 3-panel layout
 func (m model) handleDynamicPanelClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
-	// Calculate content area boundaries
-	titleHeight := 3 // title + instructions + separator + tab bar
+	// Calculate content area boundaries - MUST match renderDynamicPanels exactly!
+	contentStartY := 0
 	if m.config.UI.ShowTitle {
-		titleHeight += 1 // add tab bar
+		contentStartY += 2 // Title bar is 2 lines
 	}
-	statusHeight := 1
-	contentStartY := titleHeight
+	contentStartY += 1 // Tab bar is always 1 line
+
+	statusHeight := 0
+	if m.config.UI.ShowStatus {
+		statusHeight = 1
+	}
 	contentEndY := m.height - statusHeight
 
 	// Only process clicks within content area
@@ -304,11 +315,11 @@ func (m model) handleDynamicPanelClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Calculate content dimensions
-	contentHeight := contentEndY - contentStartY
-	contentWidth := m.width
+	// Calculate content dimensions using same method as rendering
+	contentWidth, contentHeight := m.calculateLayout()
+	contentHeight -= 2 // Account for tab bar (matches renderTabbed)
 
-	// Calculate 3-panel layout dimensions
+	// Calculate 3-panel layout dimensions using SAME contentHeight as rendering
 	leftWidth, _, topHeight, _ := m.calculateThreePanelLayout(contentWidth, contentHeight)
 
 	// Calculate relative Y position
@@ -328,6 +339,60 @@ func (m model) handleDynamicPanelClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 		// Click in bottom panel area
 		m.focusedPanel = "bottom"
 		m.statusMsg = "Focused BOTTOM panel (clicked)"
+	}
+
+	return m, nil
+}
+
+// handleFourPanelClick handles clicks on 4-panel layout (tab 12)
+func (m model) handleFourPanelClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
+	// Calculate content area boundaries - MUST match renderFourPanelTab exactly!
+	contentStartY := 0
+	if m.config.UI.ShowTitle {
+		contentStartY += 2 // Title bar is 2 lines
+	}
+	contentStartY += 1 // Tab bar is always 1 line
+
+	statusHeight := 0
+	if m.config.UI.ShowStatus {
+		statusHeight = 1
+	}
+	contentEndY := m.height - statusHeight
+
+	// Only process clicks within content area
+	if msg.Y < contentStartY || msg.Y >= contentEndY {
+		return m, nil
+	}
+
+	// Calculate content dimensions using same method as rendering
+	// This matches: contentWidth, contentHeight := m.calculateLayout(); contentHeight -= 2
+	contentWidth, contentHeight := m.calculateLayout()
+	contentHeight -= 2 // Account for tab bar (matches renderTabbed)
+
+	// Calculate 4-panel layout dimensions using SAME contentHeight as rendering
+	headerHeight, middleHeight, _, leftWidth, _ := m.calculateFourPanelLayout(contentWidth, contentHeight)
+
+	// Calculate relative Y position
+	relY := msg.Y - contentStartY
+
+	// Determine which panel was clicked
+	if relY < headerHeight {
+		// Click in header panel
+		m.focusedPanel = "header"
+		m.statusMsg = fmt.Sprintf("Focused HEADER panel (Y:%d, relY:%d, hdrH:%d)", msg.Y, relY, headerHeight)
+	} else if relY < headerHeight+middleHeight {
+		// Click in middle row (left or right panel)
+		if msg.X < leftWidth {
+			m.focusedPanel = "left"
+			m.statusMsg = fmt.Sprintf("Focused LEFT panel (X:%d, leftW:%d)", msg.X, leftWidth)
+		} else if msg.X > leftWidth { // Skip divider at X == leftWidth
+			m.focusedPanel = "right"
+			m.statusMsg = fmt.Sprintf("Focused RIGHT panel (X:%d, leftW:%d)", msg.X, leftWidth)
+		}
+	} else {
+		// Click in footer panel
+		m.focusedPanel = "footer"
+		m.statusMsg = fmt.Sprintf("Focused FOOTER panel (Y:%d, relY:%d, boundary:%d)", msg.Y, relY, headerHeight+middleHeight)
 	}
 
 	return m, nil

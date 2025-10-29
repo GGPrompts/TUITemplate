@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -10,13 +12,18 @@ import (
 
 // Init is called when the program starts
 func (m model) Init() tea.Cmd {
-	// Return any initialization commands here
-	// Example:
-	// return tea.Batch(
-	//     loadDataCmd(),
-	//     tea.EnterAltScreen,
-	// )
-	return nil
+	// Start the animation ticker for effects
+	return tea.Batch(
+		tickCmd(),
+		tea.WindowSize(),
+	)
+}
+
+// tickCmd returns a command that sends a tick message every 50ms (20fps)
+func tickCmd() tea.Cmd {
+	return tea.Tick(50*time.Millisecond, func(time.Time) tea.Msg {
+		return tickMsg{}
+	})
 }
 
 // Update handles all messages and updates the model
@@ -35,6 +42,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Mouse input
 	case tea.MouseMsg:
 		return m.handleMouseEvent(msg)
+
+	// Animation tick for effects
+	case tickMsg:
+		// Update all effects
+		if m.metaballEngine != nil {
+			m.metaballEngine.Update()
+		}
+		if m.waveGrid != nil {
+			m.waveGrid.Update()
+		}
+		if m.rainbowCycler != nil {
+			m.rainbowCycler.Update()
+		}
+		// Continue ticking
+		return m, tickCmd()
 
 	// Custom messages
 	case errMsg:

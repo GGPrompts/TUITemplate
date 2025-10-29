@@ -2,6 +2,35 @@
 
 Documentation of key fixes and patterns for AI-assisted development of this TUI template system.
 
+## Quick Reference - Critical Rules
+
+**The 4 Golden Rules for TUI Layout:**
+
+1. **Always Account for Borders** - Subtract 2 from height calculations BEFORE rendering panels
+   ```
+   contentHeight = totalHeight - titleLines - statusLines - 2 (borders)
+   ```
+
+2. **Never Auto-Wrap in Bordered Panels** - Always truncate text explicitly
+   ```go
+   maxTextWidth := panelWidth - 4  // -2 borders, -2 padding
+   text = truncateString(text, maxTextWidth)
+   ```
+
+3. **Match Mouse Detection to Layout** - Use X coords for horizontal, Y coords for vertical
+   ```go
+   if m.shouldUseVerticalStack() {
+       // Use msg.Y
+   } else {
+       // Use msg.X
+   }
+   ```
+
+4. **Use Weights, Not Pixels** - Proportional layouts scale perfectly
+   ```go
+   width := (totalWidth * weight) / totalWeights
+   ```
+
 ## Critical Layout Fixes
 
 ### Issue 1: Panels Covering Header / Border Overflow
@@ -155,6 +184,35 @@ When panels don't align or render incorrectly:
    - Count panel borders (always 2)
    - Formula: `contentHeight = totalHeight - titleLines - statusLines - borderLines`
 
+   **Visual Layout:**
+   ```
+   ┌─────────────────────────────────┐  ← Title Bar (3 lines)
+   │  App Title                      │
+   │  Subtitle/Info                  │
+   ├─────────────────────────────────┤  ─┐
+   │ ┌─────────────┬───────────────┐ │   │
+   │ │             │               │ │   │
+   │ │   Left      │     Right     │ │   │ Content Height
+   │ │   Panel     │     Panel     │ │   │ (minus borders)
+   │ │             │               │ │   │
+   │ └─────────────┴───────────────┘ │   │
+   ├─────────────────────────────────┤  ─┘
+   │ Status Bar: Help text here      │  ← Status Bar (1 line)
+   └─────────────────────────────────┘
+
+   Panel borders (┌─┐ └─┘) = 2 lines total (top + bottom)
+   ```
+
+   **Height Calculation:**
+   ```
+   Total Terminal Height: 25
+   - Title Bar:           -3
+   - Status Bar:          -1
+   - Panel Borders:       -2
+   ─────────────────────────
+   Content Height:        19 ✓
+   ```
+
 2. **Check text wrapping**:
    - Calculate max text width: `panelWidth - 4` (2 for borders, 2 for padding)
    - Truncate ALL strings before rendering
@@ -170,6 +228,34 @@ When panels don't align or render incorrectly:
    - Use same border style for all panels
    - Don't mix `Height()` setting with natural height
    - Let content determine height, borders add to it
+
+### Debugging Decision Tree
+
+```
+Panel Layout Problem?
+│
+├─ Panels covering title/status bar?
+│  └─> Check height accounting (Rule #1)
+│      - Did you subtract 2 for borders?
+│      - Formula: totalHeight - titleLines - statusLines - 2
+│
+├─ Panels misaligned (different heights)?
+│  └─> Check text wrapping (Rule #2)
+│      - Is text wrapping to multiple lines?
+│      - maxWidth = panelWidth - 4
+│      - Truncate ALL strings explicitly
+│
+├─ Mouse clicks not working?
+│  └─> Check mouse detection (Rule #3)
+│      - Vertical stack? → Use msg.Y
+│      - Horizontal? → Use msg.X
+│      - Match detection to layout mode
+│
+└─ Accordion/resize janky?
+   └─> Check weight calculations (Rule #4)
+       - Using weights instead of pixels?
+       - Formula: (totalWidth * weight) / totalWeights
+```
 
 ## Common Pitfalls
 
@@ -220,5 +306,5 @@ if m.shouldUseVerticalStack() {
 ---
 
 **Created**: 2025-01-19
-**Last Updated**: 2025-01-19
+**Last Updated**: 2025-10-23
 **Purpose**: Preserve critical bug fixes and patterns for future AI-assisted development

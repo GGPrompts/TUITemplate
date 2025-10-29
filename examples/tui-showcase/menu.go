@@ -47,6 +47,15 @@ func getMenus() map[string]Menu {
 				{Label: "Mobile Patterns", Action: "show-mobile", Shortcut: "Tab 12"},
 			},
 		},
+		"effects": {
+			Label: "Effects",
+			Items: []MenuItem{
+				{Label: "Metaballs", Action: "show-metaballs"},
+				{Label: "Wavy Grid", Action: "show-wavy-menu"},
+				{Label: "Rainbow Text", Action: "show-rainbow"},
+				{Label: "Landing Page", Action: "show-landing"},
+			},
+		},
 		"help": {
 			Label: "Help",
 			Items: []MenuItem{
@@ -61,7 +70,7 @@ func getMenus() map[string]Menu {
 
 // getMenuOrder returns the order of menus in the menu bar
 func getMenuOrder() []string {
-	return []string{"file", "view", "components", "help"}
+	return []string{"file", "view", "components", "effects", "help"}
 }
 
 // renderMenuBar renders the menu bar
@@ -379,6 +388,20 @@ func (m model) executeMenuAction(action string) (tea.Model, tea.Cmd) {
 	case "show-mobile":
 		m.currentTab = 11
 		m.statusMsg = "Tab: Mobile"
+
+	// Effects - full-screen mode
+	case "show-metaballs":
+		m.activeEffect = "metaballs"
+		m.statusMsg = "Metaballs Effect - Press Esc to return"
+	case "show-wavy-menu":
+		m.activeEffect = "wavy-menu"
+		m.statusMsg = "Wavy Grid Effect - Press Esc to return"
+	case "show-rainbow":
+		m.activeEffect = "rainbow"
+		m.statusMsg = "Rainbow Text Effect - Press Esc to return"
+	case "show-landing":
+		m.activeEffect = "landing"
+		m.statusMsg = "Landing Page Effect - Press Esc to return"
 
 	// Help
 	case "show-help-keys":

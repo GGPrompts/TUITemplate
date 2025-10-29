@@ -61,7 +61,16 @@ func (m model) renderFormsTab(width, height int) string {
 		Render("┌─ Validation ────────────────┐\n│ Password: [********]       │\n│ ⚠ Must be 8+ characters    │\n└─────────────────────────────┘")
 	content.WriteString(validationBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // renderTablesTab demonstrates table/grid components
@@ -120,7 +129,16 @@ func (m model) renderTablesTab(width, height int) string {
 			"└───────────────────────────────────────────────────┘")
 	content.WriteString(selectionBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // renderDialogsTab demonstrates dialog/modal components
@@ -191,7 +209,16 @@ func (m model) renderDialogsTab(width, height int) string {
 			"[  Cancel  ]  [   OK   ]")
 	content.WriteString(promptBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // renderProgressTab demonstrates progress indicators
@@ -257,7 +284,16 @@ func (m model) renderProgressTab(width, height int) string {
 			"[░░░░████░░░░░░░░░░░░] Calculating...")
 	content.WriteString(indeterminateBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // renderTreeViewTab demonstrates tree/hierarchical components
@@ -324,7 +360,16 @@ func (m model) renderTreeViewTab(width, height int) string {
 			"/ to search in tree")
 	content.WriteString(controlsBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // renderMobileTab demonstrates mobile/touch-friendly patterns
@@ -400,7 +445,206 @@ func (m model) renderMobileTab(width, height int) string {
 			"✓ Minimal text wrapping")
 	content.WriteString(tipsBox)
 
-	return contentStyle.Width(width).Height(height).Render(content.String())
+	// Fit content to available height to prevent overflow
+	// Leave small buffer to account for any rendering overhead
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1 // -1 for safety buffer
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
+}
+
+// renderMetaballsTab demonstrates metaballs effect
+func (m model) renderMetaballsTab(width, height int) string {
+	if m.metaballEngine == nil {
+		return contentStyle.Width(width).Render("Metaballs engine not initialized")
+	}
+
+	var content strings.Builder
+
+	content.WriteString(titleStyle.Render("╔═══════════════════════════════════════╗"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("║      METABALLS EFFECT SHOWCASE        ║"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("╚═══════════════════════════════════════╝"))
+	content.WriteString("\n\n")
+
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Physics-based floating blobs with organic motion"))
+	content.WriteString("\n\n")
+
+	// Render the metaballs effect
+	metaballsRender := m.metaballEngine.Render()
+	content.WriteString(metaballsRender)
+
+	content.WriteString("\n\n")
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Field strength = radius² / distance² | Gradient rendering with Unicode blocks"))
+
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
+}
+
+// renderWavyMenuTab demonstrates wave grid effect
+func (m model) renderWavyMenuTab(width, height int) string {
+	if m.waveGrid == nil {
+		return contentStyle.Width(width).Render("Wave grid not initialized")
+	}
+
+	var content strings.Builder
+
+	content.WriteString(titleStyle.Render("╔═══════════════════════════════════════╗"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("║      WAVY GRID EFFECT SHOWCASE        ║"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("╚═══════════════════════════════════════╝"))
+	content.WriteString("\n\n")
+
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Sine wave distortion for animated grid backgrounds"))
+	content.WriteString("\n\n")
+
+	// Render the wavy grid effect
+	gridRender := m.waveGrid.Render()
+	content.WriteString(gridRender)
+
+	content.WriteString("\n\n")
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("wave = sin(y/5 + frame/20) × amplitude | Perfect for menu backgrounds"))
+
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
+}
+
+// renderRainbowTab demonstrates rainbow text effect
+func (m model) renderRainbowTab(width, height int) string {
+	if m.rainbowCycler == nil {
+		return contentStyle.Width(width).Render("Rainbow cycler not initialized")
+	}
+
+	var content strings.Builder
+
+	content.WriteString(titleStyle.Render("╔═══════════════════════════════════════╗"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("║      RAINBOW TEXT EFFECT SHOWCASE     ║"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("╚═══════════════════════════════════════╝"))
+	content.WriteString("\n\n")
+
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Animated rainbow colors cycling through text"))
+	content.WriteString("\n\n")
+
+	// ASCII art for demo
+	asciiArt := []string{
+		"████████╗██╗   ██╗██╗",
+		"╚══██╔══╝██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+		"   ██║   ╚██████╔╝██║",
+		"   ╚═╝    ╚═════╝ ╚═╝",
+	}
+
+	// Render rainbow ASCII art
+	rainbowArt := m.rainbowCycler.RenderLines(asciiArt)
+	content.WriteString(rainbowArt)
+
+	content.WriteString("\n\n")
+
+	// Single line example
+	exampleText := m.rainbowCycler.Render("The quick brown fox jumps over the lazy dog")
+	content.WriteString(exampleText)
+
+	content.WriteString("\n\n")
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Per-character coloring with frame-based shifting | Vertical wave patterns"))
+
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
+}
+
+// renderLandingPageTab demonstrates all effects combined
+func (m model) renderLandingPageTab(width, height int) string {
+	if m.waveGrid == nil || m.metaballEngine == nil || m.rainbowCycler == nil {
+		return contentStyle.Width(width).Render("Effects not initialized")
+	}
+
+	// This would ideally use the compositor to combine grid + metaballs + rainbow title
+	// For simplicity in the showcase, let's just show the metaballs over the grid
+
+	var content strings.Builder
+
+	content.WriteString(titleStyle.Render("╔═══════════════════════════════════════╗"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("║     LANDING PAGE - ALL EFFECTS        ║"))
+	content.WriteString("\n")
+	content.WriteString(titleStyle.Render("╚═══════════════════════════════════════╝"))
+	content.WriteString("\n\n")
+
+	// Rainbow title
+	titleArt := []string{
+		"████████╗██╗   ██╗██╗",
+		"╚══██╔══╝██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+	}
+	rainbowTitle := m.rainbowCycler.RenderLines(titleArt)
+	content.WriteString(rainbowTitle)
+
+	content.WriteString("\n\n")
+
+	// Show metaballs effect
+	metaballsRender := m.metaballEngine.Render()
+	metaballLines := strings.Split(metaballsRender, "\n")
+	if len(metaballLines) > 10 {
+		metaballLines = metaballLines[:10]
+	}
+	content.WriteString(strings.Join(metaballLines, "\n"))
+
+	content.WriteString("\n\n")
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("✨ Wavy Grid + Metaballs + Rainbow = Beautiful TUIs ✨"))
+
+	content.WriteString("\n\n")
+	content.WriteString(lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("See examples/effects/ for standalone demos | Use in your own apps!"))
+
+	contentStr := content.String()
+	lines := strings.Split(contentStr, "\n")
+	maxLines := height - 1
+	if len(lines) > maxLines {
+		lines = lines[:maxLines]
+	}
+
+	return contentStyle.Width(width).Render(strings.Join(lines, "\n"))
 }
 
 // Helper functions

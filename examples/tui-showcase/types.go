@@ -1,5 +1,11 @@
 package main
 
+import (
+	"github.com/GGPrompts/TUITemplate/lib/effects/metaballs"
+	"github.com/GGPrompts/TUITemplate/lib/effects/rainbow"
+	"github.com/GGPrompts/TUITemplate/lib/effects/waves"
+)
+
 // types.go - Type Definitions
 // Purpose: All type definitions, structs, enums, and constants
 // When to extend: Add new types here when introducing new data structures
@@ -36,11 +42,18 @@ type model struct {
 	leftContent   []string // Content for left panel
 	rightContent  []string // Content for right panel
 	bottomContent []string // Content for bottom panel (3-panel mode)
+	headerContent []string // Content for header panel (4-panel mode)
 
 	// Menu system state
-	menuOpen        bool   // Whether any menu is currently open
-	activeMenu      string // Which menu is active ("file", "view", "components", "help", "")
+	menuOpen         bool   // Whether any menu is currently open
+	activeMenu       string // Which menu is active ("file", "view", "components", "effects", "help", "")
 	selectedMenuItem int    // Index of selected item in active menu (-1 = none)
+
+	// Effects state (for animation demos)
+	metaballEngine *metaballs.Engine
+	waveGrid       *waves.Grid
+	rainbowCycler  *rainbow.Cycler
+	activeEffect   string // Current full-screen effect ("", "metaballs", "wavy-menu", "rainbow", "landing")
 }
 
 // Config holds application configuration
@@ -122,6 +135,9 @@ type resizeMsg struct {
 	width  int
 	height int
 }
+
+// tickMsg is sent on every animation frame for effects
+type tickMsg struct{}
 
 // Example custom messages:
 // type itemSelectedMsg struct { item Item }

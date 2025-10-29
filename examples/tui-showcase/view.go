@@ -23,6 +23,11 @@ func (m model) View() string {
 		return m.renderErrorView()
 	}
 
+	// If an effect is active, render it full-screen
+	if m.activeEffect != "" {
+		return m.renderFullScreenEffect()
+	}
+
 	// Always render tabbed layout
 	baseView := m.renderTabbed()
 
@@ -925,4 +930,163 @@ func (m model) overlayDropdown(baseView, dropdown string, x, y int) string {
 	}
 
 	return strings.Join(baseLines, "\n")
+}
+
+// renderFullScreenEffect renders a full-screen effect view
+func (m model) renderFullScreenEffect() string {
+	switch m.activeEffect {
+	case "metaballs":
+		return m.renderFullScreenMetaballs()
+	case "wavy-menu":
+		return m.renderFullScreenWavyMenu()
+	case "rainbow":
+		return m.renderFullScreenRainbow()
+	case "landing":
+		return m.renderFullScreenLanding()
+	default:
+		return "Unknown effect"
+	}
+}
+
+// renderFullScreenMetaballs renders the metaballs effect full-screen
+func (m model) renderFullScreenMetaballs() string {
+	if m.metaballEngine == nil {
+		return "Metaballs engine not initialized"
+	}
+
+	// Render the metaballs effect
+	metaballsRender := m.metaballEngine.Render()
+
+	// Add title and instructions at the top
+	title := lipgloss.NewStyle().
+		Foreground(colorPrimary).
+		Bold(true).
+		Render("METABALLS EFFECT")
+
+	subtitle := lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Physics-based floating blobs with organic motion")
+
+	controls := lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Press Esc or Q to return to showcase")
+
+	// Combine title, subtitle, effect, and controls
+	header := lipgloss.JoinVertical(lipgloss.Left, title, subtitle, "")
+	footer := lipgloss.JoinVertical(lipgloss.Left, "", controls)
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, metaballsRender, footer)
+}
+
+// renderFullScreenWavyMenu renders the wavy grid effect full-screen
+func (m model) renderFullScreenWavyMenu() string {
+	if m.waveGrid == nil {
+		return "Wave grid not initialized"
+	}
+
+	// Render the wavy grid effect
+	gridRender := m.waveGrid.Render()
+
+	// Add title and instructions at the top
+	title := lipgloss.NewStyle().
+		Foreground(colorPrimary).
+		Bold(true).
+		Render("WAVY GRID EFFECT")
+
+	subtitle := lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Sine wave distortion for animated grid backgrounds")
+
+	controls := lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Press Esc or Q to return to showcase")
+
+	// Combine title, subtitle, effect, and controls
+	header := lipgloss.JoinVertical(lipgloss.Left, title, subtitle, "")
+	footer := lipgloss.JoinVertical(lipgloss.Left, "", controls)
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, gridRender, footer)
+}
+
+// renderFullScreenRainbow renders the rainbow text effect full-screen
+func (m model) renderFullScreenRainbow() string {
+	if m.rainbowCycler == nil {
+		return "Rainbow cycler not initialized"
+	}
+
+	// ASCII art for demo
+	asciiArt := []string{
+		"████████╗██╗   ██╗██╗",
+		"╚══██╔══╝██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+		"   ██║   ╚██████╔╝██║",
+		"   ╚═╝    ╚═════╝ ╚═╝",
+	}
+
+	// Render rainbow ASCII art
+	rainbowArt := m.rainbowCycler.RenderLines(asciiArt)
+
+	// Single line example
+	exampleText := m.rainbowCycler.Render("The quick brown fox jumps over the lazy dog")
+
+	// Title and instructions
+	title := lipgloss.NewStyle().
+		Foreground(colorPrimary).
+		Bold(true).
+		Render("RAINBOW TEXT EFFECT")
+
+	subtitle := lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("Animated rainbow colors cycling through text")
+
+	controls := lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Press Esc or Q to return to showcase")
+
+	// Combine everything
+	header := lipgloss.JoinVertical(lipgloss.Left, title, subtitle, "")
+	content := lipgloss.JoinVertical(lipgloss.Left, rainbowArt, "", exampleText)
+	footer := lipgloss.JoinVertical(lipgloss.Left, "", controls)
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, content, footer)
+}
+
+// renderFullScreenLanding renders all effects combined full-screen
+func (m model) renderFullScreenLanding() string {
+	if m.waveGrid == nil || m.metaballEngine == nil || m.rainbowCycler == nil {
+		return "Effects not initialized"
+	}
+
+	// Rainbow title
+	titleArt := []string{
+		"████████╗██╗   ██╗██╗",
+		"╚══██╔══╝██║   ██║██║",
+		"   ██║   ██║   ██║██║",
+	}
+	rainbowTitle := m.rainbowCycler.RenderLines(titleArt)
+
+	// Render metaballs
+	metaballsRender := m.metaballEngine.Render()
+
+	// Title and instructions
+	title := lipgloss.NewStyle().
+		Foreground(colorPrimary).
+		Bold(true).
+		Render("LANDING PAGE - ALL EFFECTS COMBINED")
+
+	subtitle := lipgloss.NewStyle().
+		Foreground(colorInfo).
+		Render("✨ Wavy Grid + Metaballs + Rainbow = Beautiful TUIs ✨")
+
+	controls := lipgloss.NewStyle().
+		Foreground(colorDimmed).
+		Render("Press Esc or Q to return to showcase")
+
+	// Combine everything
+	header := lipgloss.JoinVertical(lipgloss.Left, title, subtitle, "")
+	content := lipgloss.JoinVertical(lipgloss.Left, rainbowTitle, "", metaballsRender)
+	footer := lipgloss.JoinVertical(lipgloss.Left, "", controls)
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, content, footer)
 }
